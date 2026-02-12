@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h3 class="mb-4 text-center">My Orders</h3>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="card mb-4 shadow border-0">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <h5>Order #{{ order.id }}</h5>
+                        {% if order.status == "Paid" %}
+                            <span class="badge bg-success">Paid</span>
+                        {% elif order.status == "Pending" %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cancelled</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted">
+                        Ordered on: {{ order.created_at }}
+                    </p>
+
+                    <hr>
+
+                    <h6>Items:</h6>
+                    <ul class="list-group mb-3">
+                        {% for item in order.orderitem_set.all %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>
+                                    {{ item.product.name }} (x{{ item.quantity }})
+                                </span>
+                                <span>₹{{ item.price }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="text-end">
+                        <strong>Total: ₹{{ order.total_amount }}</strong>
+                    </div>
+                    <a href="{% url 'download_invoice' order.id %}"
+   class="btn btn-outline-dark mt-3">
+   Download Invoice
+</a>
+
+
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">
+            You have no orders yet.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
